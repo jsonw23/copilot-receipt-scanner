@@ -2,15 +2,16 @@ import React, { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import axios from 'axios'
 
-import { Box } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 
 
 import './App.css';
 import ReceiptIcon from '@mui/icons-material/Receipt';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 
 let conn
 
-function ws(imageID) {
+function ws(imageID, setStatus) {
   if (conn) {
     return
   }
@@ -23,10 +24,11 @@ function ws(imageID) {
   }
   wsUrl += "//" + loc.host
   wsUrl += `/imageStatus/${imageID}/ws`
-  //wsUrl = `ws://wmcxekkb6j.us-east-1.awsapprunner.com/imageStatus/${imageID}/ws`
   conn = new WebSocket(wsUrl)
   conn.onmessage = (msg) => {
     console.log(msg)
+    let data = JSON.parse(msg.data)
+    setStatus(data.status)
   }
   conn.onopen = () => {
     console.log("websocket connection opened")
@@ -36,10 +38,11 @@ function ws(imageID) {
 
 function App() {
   const [imageID, setImageID] = useState()
+  const [status, setStatus] = useState()
 
   console.log(imageID)
   if (imageID) {
-    ws(imageID)
+    ws(imageID, setStatus)
   }
 
 
@@ -61,23 +64,45 @@ function App() {
   }, [])
   const { getRootProps, getInputProps } = useDropzone({ onDrop })
 
-  return (
-    <div className="App" {...getRootProps()}>
-      <Box sx={{
-        backgroundColor: "primary.dark",
-        color: "primary.light",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-      }}>
-        <input {...getInputProps()} />
-        <ReceiptIcon sx={{fontSize: "128px", color: "white"}} />
-        Tap to Scan Receipt
-      </Box>
-    </div>
-  );
+  if (!imageID) {
+    return (
+      <div className="App" {...getRootProps()}>
+        <Box sx={{
+          backgroundColor: "primary.dark",
+          color: "primary.light",
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
+          <input {...getInputProps()} />
+          <ReceiptIcon sx={{fontSize: "128px", color: "white"}} />
+          Tap to Scan Receipt
+        </Box>
+      </div>
+    )
+  } else {
+    return (
+      <div className="App">
+        <Box sx={{
+          backgroundColor: "primary.dark",
+          color: "primary.light",
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
+          {status != "Accepted" &&
+            <CircularProgress sx={{fontSize: "128px", color: "white"}} />}
+          {status == "Accepted" &&
+            <CheckCircleIcon sx={{fontSize: "128px", color: "white"}} />}
+          {status ?? "Uploaded"}
+        </Box>
+      </div>
+    )
+  }
 }
 
 export default App;

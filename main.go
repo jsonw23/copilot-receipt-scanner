@@ -198,7 +198,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request, id string) {
 				return
 			}
 			conn.WriteJSON(gin.H{
-				status: status,
+				"status": status,
 			})
 		}
 	}(id, statusChannels[id])
