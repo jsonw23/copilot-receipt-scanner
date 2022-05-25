@@ -1,6 +1,6 @@
 # AWS Copilot Sample Application - Receipt Scanner
 This is the front-end API & app for my receipt scanner copilot sample application.  This needs to be installed first,
-and then `copilot-receipt-scanner-backend` is also needed.
+and then [copilot-receipt-scanner-backend](https://github.com/jsonw23/copilot-receipt-scanner-backend) is also needed.
 
 ## Installation
 To install this on your AWS account, you'll need:
