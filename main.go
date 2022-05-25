@@ -128,11 +128,11 @@ func main() {
 			var message ConfirmationMessage
 			bytes, err := io.ReadAll(c.Request.Body)
 			if err != nil {
-				log.Fatal(err)
+				log.Println(err)
 			}
 			err = json.Unmarshal(bytes, &message)
 			if err != nil {
-				log.Fatal(err)
+				log.Println(err)
 			}
 			log.Println(message.SubscribeURL)
 
@@ -140,16 +140,16 @@ func main() {
 			var incomingMessage IncomingMessage
 			bytes, err := io.ReadAll(c.Request.Body)
 			if err != nil {
-				log.Fatal(err)
+				log.Println(err)
 			}
 			err = json.Unmarshal(bytes, &incomingMessage)
 			if err != nil {
-				log.Fatal(err)
+				log.Println(err)
 			}
 			var statusMessage StatusMessage
 			err = json.Unmarshal([]byte(incomingMessage.Message), &statusMessage)
 			if err != nil {
-				log.Fatal(err)
+				log.Println(err)
 			}
 			log.Printf("ImageID: %s, Status: %s", statusMessage.ImageID, statusMessage.Status)
 			statusChannels[statusMessage.ImageID] <- statusMessage.Status
